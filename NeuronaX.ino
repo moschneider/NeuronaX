@@ -1,3 +1,19 @@
+/***************************************************
+ *                                                 *
+ *               N E U R O N A   X                 *
+ *                                                 *
+ *    Simulador de Perceptron Multicamadas (MLP)   *
+ *    com Backpropagation utilizando Arduino Uno   *
+ *                                                 *
+ *    Desenvolvido em 2021 por Marvin Schneider    * 
+ *          GNU General Public Licence             *
+ *                                                 *
+ *      Se inscreva no meu canal de Youtube:       *
+ * https://www.youtube.com/ProjetosJogosETemperos  *
+ *                                                 *
+ ***************************************************/
+
+
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
 #include <CuteBuzzerSounds.h>
@@ -62,7 +78,7 @@ const byte  button2Pin   = 4;
 const byte  button3Pin   = A1;
 
 byte button1Val         = 0;
-byte button2Val         = 0;
+byte button2Val         = 0; 
 byte button3Val         = 0; 
 
 /* Joystick e seus valores */
@@ -473,7 +489,7 @@ void blkX(int dly)
   }
 }
 
-/* */
+/* Ligar camada de saida esperada */
 
 void onY(int dly)
 {
@@ -484,6 +500,8 @@ void onY(int dly)
   delay(dly);
 }
 
+/* Desligar camada de saida esperada */
+
 void offY(int dly)
 {
   offSr(6,0);
@@ -492,6 +510,8 @@ void offY(int dly)
   tick();
   delay(dly);
 }
+
+/* Pisca a camada de saida desejada */
 
 void blkY(int dly)
 {
@@ -503,6 +523,8 @@ void blkY(int dly)
   }
 }
 
+/* Liga a camada escondida */
+
 void onH(int dly)
 {
   digitalWrite(h1Pin,HIGH);
@@ -512,6 +534,8 @@ void onH(int dly)
   delay(dly);
 }
 
+/* Desliga a camada escondida */
+
 void offH(int dly)
 {
   digitalWrite(h1Pin,LOW);
@@ -520,6 +544,8 @@ void offH(int dly)
   tick();
   delay(dly);
 }
+
+/* Pisca a camada escondida */
 
 void blkH(int dly)
 {
@@ -531,6 +557,7 @@ void blkH(int dly)
   }
 }
 
+/* Liga a camada de saida calculada */
 
 void onO(int dly)
 {
@@ -541,6 +568,8 @@ void onO(int dly)
   delay(dly);
 }
 
+/* Desliga a camada de saida calculada */
+
 void offO(int dly)
 {
   digitalWrite(o1Pin,LOW);
@@ -549,6 +578,8 @@ void offO(int dly)
   tick();
   delay(dly);
 }
+
+/* Pisca a camada de saida calculada */
 
 void blkO(int dly)
 {
@@ -559,6 +590,8 @@ void blkO(int dly)
     offO(dly);
   }
 }
+
+/* Ilustra o treinamento da rede */
 
 void trn(int dly)
 {
@@ -596,6 +629,8 @@ void trn(int dly)
   offX(0);
 }
 
+/* Mostra titulo da secao e explicacao a respeito de um elemento */
+
 void explain(String txt, byte row, boolean cls, byte tipo)
 {
   if(cls)
@@ -612,6 +647,10 @@ void explain(String txt, byte row, boolean cls, byte tipo)
 
   cPrint(row,txt);
 }
+
+/* Demonstra atraves de led e explica o funcionamento feedforward da rede */
+
+/* Separado nos passos */
 
 void feedForwardAnimate(int dly)
 {
@@ -804,6 +843,8 @@ void feedForwardAnimate(int dly)
   delay(500);
 }
 
+/* Demonstra atraves de led e explica o algoritmo de aprendizado Backpropagation */
+
 void backPropagationAnimate(int dly)
 {
   cute.play(S_MODE3);
@@ -886,6 +927,8 @@ void backPropagationAnimate(int dly)
   delay(500);
 }
 
+/* Mostra e explica os elementos da rede */
+
 void elementosAnimate(int dly)
 {
   cute.play(S_MODE2);
@@ -931,11 +974,15 @@ void elementosAnimate(int dly)
   delay(500);
 }
 
+/* Limpa o buffer do modulo de joystick */
+
 void clearJBuffer()
 {
   while(joyMoved())
     readInterface();
 }
+
+/* Liga todos os leds e mostra valores da interface de entrada (para debug) */
 
 void testarHardware()
 {
@@ -963,6 +1010,8 @@ void testarHardware()
   
 }
 
+/* Mostra as opcoes do menu de demonstracao */
+
 void showMenuDemonstrar()
 {
   lcd.clear();
@@ -972,6 +1021,8 @@ void showMenuDemonstrar()
   cPrint(2,F("Feedforward"));
   cPrint(3,F("Backpropagation"));
 }
+
+/* Executa o sub-menu de demonstracao da rede */
 
 void menuDemonstrar()
 {
@@ -1036,6 +1087,8 @@ void menuDemonstrar()
   }
 }
 
+/* Inicializa pares de entrada e saida da rede */
+
 void initPares()
 {
   X[0][0]=1;
@@ -1088,6 +1141,8 @@ void initPares()
 
 }
 
+/* Inicializa o par de entrada e saida usado no calculo de reconhecimento */
+
 void initRec()
 {
   X[6][0]=0;
@@ -1099,6 +1154,8 @@ void initRec()
   Y[6][2]=0;
 }
 
+/* Escreve zero nas camadas de entrada e saida desejada */
+
 void zeraEntradasSaidasDesejadas()
 {
   for(int i=0;i<A;i++)
@@ -1107,6 +1164,8 @@ void zeraEntradasSaidasDesejadas()
   for(int k=0;k<C;k++)
     y[k]=0; 
 }
+
+/* Gera valores randomicos para a inicializacao da rede */
 
 float randomF()
 {
@@ -1118,6 +1177,8 @@ float randomF()
 
   return flag;
 }
+
+/* Inicializa a rede */
 
 void initRede()
 {
@@ -1133,6 +1194,8 @@ void initRede()
     for(int k=0;k<C;k++)
       q[j][k]=randomF();
 }
+
+/* Imprime os valores da rede neural na saida serial (apenas para debug) */
 
 void dumpRede()
 {
@@ -1201,10 +1264,14 @@ void dumpRede()
   Serial.println(F("------------------------------------------------------\n"));
 }
 
+/* Funcao de ativacao */
+
 float sigmoide(float x)
 {
   return (1 / (1 + exp(-x)));
 }
+
+/* Zera os axonios da camada escondida e da saida calculada */
 
 void zeraEscondidosSaidas()
 {
@@ -1216,7 +1283,7 @@ void zeraEscondidosSaidas()
 }
 
 /**
- * Funcionar a rede
+ * Funcionar a rede (executar em funcao de reconhecimento)
  */
 
 void funcionarRede()
@@ -1286,6 +1353,8 @@ void backPropagation()
   
 }
 
+/* Retorna se o botao de saida foi apertado */
+
 boolean exitButtonPressed()
 {
   byte b = digitalRead(button3Pin);
@@ -1295,6 +1364,8 @@ boolean exitButtonPressed()
 
   return false;
 }
+
+/* Atualiza os leds de acordo com os valores atuais em memoria */
 
 void updateLeds(byte p, byte c)
 {
@@ -1315,6 +1386,8 @@ void updateLeds(byte p, byte c)
   onPn(9+c,0);
 }
 
+/* Mostra descricoes de pares */
+
 void updateDesc(byte p, byte c)
 {
   lcd.setCursor(1,2);
@@ -1329,6 +1402,8 @@ void updateDesc(byte p, byte c)
   
 }
 
+/* Mostra descricoes de leds */
+
 void updateDesc2(byte c)
 {
   lcd.setCursor(1,2);
@@ -1339,6 +1414,8 @@ void updateDesc2(byte c)
   lcd.print(c);
   
 }
+
+/* Permite ao usuario programar os conjuntos de treinamento */
 
 void programarRede()
 {
@@ -1425,6 +1502,8 @@ void programarRede()
 
   showExecutar();
 }
+
+/* Treina a rede a partir dos conjuntos de treinamento programados */
 
 void treinarRede()
 {
@@ -1557,6 +1636,8 @@ void treinarRede()
   delay(500);
 }
 
+/* Copia entrada e saida de um conjunto de treinamento para a rede */
+
 void copyIO(byte p)
 {
   for(byte i=0;i<3;i++)
@@ -1565,6 +1646,8 @@ void copyIO(byte p)
     y[i]=Y[p][i];
   }
 }
+
+/* Adapta a luz dos leds na camada escondida de acordo com os valores */
 
 void showH()
 {
@@ -1583,6 +1666,8 @@ void showH()
   }
 }
 
+/* Adapta a luz dos leds na saida calculada de acordo com os valores */
+
 void showO()
 {
   byte valor = 0;
@@ -1596,6 +1681,8 @@ void showO()
     analogWrite(9+i,valor);
   }
 }
+
+/* Demonstrar o funcionamento da rede atraves de leds */
 
 void animateFuncionar(int dly)
 {
@@ -1612,6 +1699,8 @@ void animateFuncionar(int dly)
   showO();
 }
 
+/* Calculo do erro medio na saida */
+
 float erroMedio()
 {
   float flag=0;
@@ -1625,6 +1714,8 @@ float erroMedio()
 
   return flag;
 }
+
+/* Funcionar a rede a partir de uma programacao realizada por um usuario */
 
 void reconhecerRede()
 {
@@ -1734,6 +1825,8 @@ void reconhecerRede()
   delay(500);
 }
 
+/* Opcoes do sub-menu de execucao */
+
 void showExecutar()
 {
   lcd.clear();
@@ -1743,6 +1836,8 @@ void showExecutar()
   cPrint(2,F("Treinar"));
   cPrint(3,F("Reconhecer"));
 }
+
+/* Funcionar o sub-menu de execucao */
 
 void menuExecutar()
 {
@@ -1807,6 +1902,8 @@ void menuExecutar()
   }
 }
 
+/* Descricao do menu principal */
+
 void showMenu()
 {
   lcd.clear();
@@ -1816,6 +1913,8 @@ void showMenu()
   cPrint(2,F("Executar"));
   cPrint(3,F("Testar Hardware"));
 }
+
+/* Execucao do menu principal */
 
 void menu()
 {
@@ -1868,6 +1967,8 @@ void menu()
 
   }
 }
+
+/* Chamando o menu principal */
 
 void loop() {
 
